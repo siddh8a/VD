@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Visual Dictionary Pro - Unsplash Edition</title>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600&display=swap"
+            rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <style>
+            /* --- CSS VARIABLES & RESET --- */
+            :root {
+                --glass-bg: rgba(255, 255, 255, 0.25);
+                --glass-border: rgba(255, 255, 255, 0.2);
+                --primary: #4158D0;
+                --accent: #C850C0;
+                --text-dark: #2d3436;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: 'Poppins', sans-serif;
+            }
+
+            .hi-text {
+                font-family: 'Noto Sans Devanagari', sans-serif;
+            }
+
+            body {
+                background-color: #4158D0;
+                background-image: linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%);
+                height: 100vh;
+                width: 100vw;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                overflow: hidden;
+            }
+
+            /* --- DASHBOARD LAYOUT --- */
+            .dashboard {
+                width: 95vw;
+                height: 92vh;
+                background: var(--glass-bg);
+                box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+                backdrop-filter: blur(18px);
+                -webkit-backdrop-filter: blur(18px);
+                border-radius: 24px;
+                border: 1px solid var(--glass-border);
+                display: grid;
+                grid-template-columns: 300px 1fr;
+                overflow: hidden;
+            }
+
+            /* --- SIDEBAR --- */
+            .sidebar {
+                background: rgba(255, 255, 255, 0.15);
+                border-right: 1px solid var(--glass-border);
+                padding: 25px;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .brand {
+                font-size: 1.5rem;
+                color: #fff;
+                font-weight: 700;
+                margin-bottom: 30px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .search-container {
+                position: relative;
+                margin-bottom: 20px;
+            }
+
+            .search-container input {
+                width: 100%;
+                padding: 12px 40px 12px 15px;
+                border-radius: 12px;
+                border: none;
+                outline: none;
+                background: rgba(255, 255, 255, 0.9);
+                font-size: 0.95rem;
+                color: var(--text-dark);
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+                transition: 0.3s;
+            }
+
+            .search-container input:focus {
+                transform: scale(1.02);
+            }
+
+            .search-icon {
+                position: absolute;
+                right: 12px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--primary);
+                cursor: pointer;
+            }
+
+            .menu-title {
+                font-size: 0.75rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                color: rgba(255, 255, 255, 0.7);
+                margin: 20px 0 10px 0;
+                font-weight: 600;
+            }
+
+            .wotd-card {
+                background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.1));
+                padding: 15px;
+                border-radius: 15px;
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                cursor: pointer;
+                transition: 0.3s;
+            }
+
+            .wotd-card:hover {
+                transform: translateY(-3px);
+                background: rgba(255, 255, 255, 0.5);
+            }
+
+            .wotd-label {
+                font-size: 0.7rem;
+                color: #4158D0;
+                font-weight: 700;
+                text-transform: uppercase;
+                display: block;
+                margin-bottom: 5px;
+            }
+
+            .wotd-word {
+                font-size: 1.1rem;
+                color: white;
+                font-weight: 600;
+            }
+
+            /* --- MAIN STAGE --- */
+            .main-content {
+                padding: 30px 40px;
+                overflow-y: auto;
+                position: relative;
+            }
+
+            .main-content::-webkit-scrollbar {
+                width: 8px;
+            }
+
+            .main-content::-webkit-scrollbar-thumb {
+                background: rgba(255, 255, 255, 0.3);
+                border-radius: 4px;
+            }
+
+            /* Hero Visual & Unsplash Attribution */
+            .hero {
+                display: grid;
+                grid-template-columns: 1.5fr 1fr;
+                gap: 25px;
+                margin-bottom: 30px;
+            }
+
+            .visual-wrapper {
+                position: relative;
+            }
+
+            .visual-frame {
+                height: 320px;
+                border-radius: 20px;
+                overflow: hidden;
+                background: rgba(0, 0, 0, 0.1);
+                position: relative;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            }
+
+            .visual-frame img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.5s;
+            }
+
+            .visual-frame:hover img {
+                transform: scale(1.03);
+            }
+
+            /* Unsplash Attribution Style */
+            .attribution {
+                position: absolute;
+                bottom: 10px;
+                right: 10px;
+                background: rgba(0, 0, 0, 0.6);
+                color: rgba(255, 255, 255, 0.8);
+                padding: 4px 10px;
+                border-radius: 20px;
+                font-size: 0.7rem;
+                backdrop-filter: blur(5px);
+            }
+
+            .attribution a {
+                color: #fff;
+                text-decoration: none;
+                font-weight: 600;
+            }
+
+            .attribution a:hover {
+                text-decoration: underline;
+            }
+
+            .word-info {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+
+            .word-title {
+                font-size: 3.5rem;
+                color: #fff;
+                line-height: 1.1;
+                margin-bottom: 5px;
+                text-transform: capitalize;
+            }
+
+            .phonetic {
+                font-size: 1.2rem;
+                color: rgba(255, 255, 255, 0.8);
+                font-style: italic;
+                margin-bottom: 15px;
+            }
+
+            .translation-badge {
+                background: #fff;
+                color: var(--primary);
+                padding: 8px 15px;
+                border-radius: 12px;
+                font-weight: 600;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                width: fit-content;
+                margin-bottom: 15px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .audio-btn {
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                border: none;
+                background: rgba(255, 255, 255, 0.8);
+                color: var(--primary);
+                font-size: 1.2rem;
+                cursor: pointer;
+                transition: 0.3s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .audio-btn:hover {
+                background: #fff;
+                transform: scale(1.1);
+            }
+
+            /* Content Sections */
+            .section-header {
+                font-size: 1.1rem;
+                color: white;
+                margin: 25px 0 15px 0;
+                font-weight: 600;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+                padding-bottom: 5px;
+            }
+
+            .definition-card {
+                background: rgba(255, 255, 255, 0.6);
+                padding: 20px;
+                border-radius: 16px;
+                margin-bottom: 15px;
+                border-left: 4px solid var(--primary);
+            }
+
+            .pos {
+                font-size: 0.75rem;
+                background: var(--primary);
+                color: #fff;
+                padding: 3px 8px;
+                border-radius: 6px;
+                text-transform: uppercase;
+                font-weight: 700;
+                margin-bottom: 8px;
+                display: inline-block;
+            }
+
+            .meaning {
+                color: #333;
+                font-size: 1rem;
+                margin-bottom: 5px;
+                line-height: 1.5;
+            }
+
+            .example {
+                color: #555;
+                font-style: italic;
+                font-size: 0.9rem;
+                padding-left: 10px;
+                border-left: 2px solid var(--accent);
+            }
+
+            /* Tags */
+            .tags-grid {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .dual-tag {
+                background: rgba(255, 255, 255, 0.7);
+                border: 1px solid rgba(255, 255, 255, 0.5);
+                padding: 6px 14px;
+                border-radius: 30px;
+                font-size: 0.9rem;
+                color: var(--text-dark);
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                cursor: pointer;
+                transition: 0.2s;
+            }
+
+            .dual-tag:hover {
+                background: #fff;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .dual-tag .hi {
+                color: var(--primary);
+                font-weight: 600;
+                font-size: 0.85rem;
+            }
+
+            .dual-tag.ant {
+                border-color: rgba(255, 0, 0, 0.2);
+            }
+
+            .dual-tag.ant .hi {
+                color: #e74c3c;
+            }
+
+            .loading-screen {
+                text-align: center;
+                color: white;
+                padding-top: 100px;
+                font-size: 1.2rem;
+            }
+
+            .loader {
+                display: inline-block;
+                width: 40px;
+                height: 40px;
+                border: 4px solid rgba(255, 255, 255, 0.3);
+                border-radius: 50%;
+                border-top-color: #fff;
+                animation: spin 1s ease-in-out infinite;
+                margin-bottom: 15px;
+            }
+
+            @keyframes spin {
+                to {
+                    transform: rotate(360deg);
+                }
+            }
+
+            @media (max-width: 900px) {
+                .dashboard {
+                    grid-template-columns: 1fr;
+                    height: 100vh;
+                    width: 100vw;
+                    border-radius: 0;
+                }
+
+                .sidebar {
+                    display: none;
+                }
+
+                .hero {
+                    grid-template-columns: 1fr;
+                }
+
+                .visual-frame {
+                    height: 200px;
+                }
+
+                .word-title {
+                    font-size: 2.5rem;
+                }
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <div class="dashboard">
+            <aside class="sidebar">
+                <div class="brand"><i class="fas fa-camera-retro"></i> VisualDict Pro</div>
+                <div class="search-container">
+                    <input type="text" id="inp-word" placeholder="Search..."
+                        onkeydown="if(event.key === 'Enter') searchWord()">
+                    <i class="fas fa-search search-icon" onclick="searchWord()"></i>
+                </div>
+                <div class="menu-title">Daily Pick</div>
+                <div class="wotd-card" id="wotd-trigger">
+                    <span class="wotd-label"><i class="fas fa-star"></i> Word of the Day</span>
+                    <div class="wotd-word" id="wotd-text">Loading...</div>
+                </div>
+            </aside>
+
+            <main class="main-content" id="display-area">
+            </main>
+        </div>
+
+        <script>
+            // ==========================================
+            // IMPORTANT: PASTE YOUR UNSPLASH KEY HERE
+            // ==========================================
+            const UNSPLASH_ACCESS_KEY = 'TuTrBlrzew5WbFcT1Qof2kGfN6sZbJlzoPD01ylkcJw';
+            // ==========================================
+
+            const DICT_API = "https://api.dictionaryapi.dev/api/v2/entries/en/";
+            const TRANS_API = "https://api.mymemory.translated.net/get?langpair=en|hi&q=";
+            const UNSPLASH_ENDPOINT = `https://api.unsplash.com/photos/random?orientation=landscape&client_id=${UNSPLASH_ACCESS_KEY}&query=`;
+
+            const interestingWords = ["Serendipity", "Petrichor", "Ethereal", "Aurora", "Solitude", "Luminous", "Epiphany", "Velocity", "Zenith", "Horizon", "Symphony", "Mosaic", "Wanderlust"];
+            const display = document.getElementById("display-area");
+            const inp = document.getElementById("inp-word");
+            const wotdText = document.getElementById("wotd-text");
+            const wotdTrigger = document.getElementById("wotd-trigger");
+
+            window.onload = () => {
+                const randomWord = interestingWords[Math.floor(Math.random() * interestingWords.length)];
+                wotdText.innerText = randomWord;
+                fetchData(randomWord);
+                wotdTrigger.onclick = () => { inp.value = randomWord; fetchData(randomWord); }
+            };
+
+            function searchWord() {
+                const word = inp.value.trim();
+                if (word) fetchData(word);
+            }
+
+            async function translateText(text) {
+                try {
+                    const res = await fetch(TRANS_API + text);
+                    const data = await res.json();
+                    return data.responseData.translatedText;
+                } catch (e) { return text; }
+            }
+
+            // --- NEW FUNCTION: Fetch Unsplash Image ---
+            async function getUnsplashPhoto(query) {
+                if (UNSPLASH_ACCESS_KEY === 'PASTE_YOUR_UNSPLASH_ACCESS_KEY_HERE') {
+                    console.warn("Unsplash API Key missing. Using placeholder.");
+                    return null;
+                }
+                try {
+                    const res = await fetch(UNSPLASH_ENDPOINT + query);
+                    if (!res.ok) throw new Error(`Unsplash error: ${res.status}`);
+                    const data = await res.json();
+                    return {
+                        url: data.urls.regular,
+                        userName: data.user.name,
+                        userLink: data.user.links.html
+                    };
+                } catch (e) {
+                    console.error("Failed to fetch Unsplash image, using fallback.", e);
+                    return null;
+                }
+            }
+
+            async function fetchData(word) {
+                display.innerHTML = `<div class="loading-screen"><div class="loader"></div><p>Fetching "${word}"...</p><small>Getting professional photo & translations...</small></div>`;
+
+                try {
+                    // 1. Parallel Fetching: Dictionary, Translation, and Unsplash Image
+                    const [dictRes, hindiMain, unsplashData] = await Promise.all([
+                        fetch(DICT_API + word),
+                        translateText(word),
+                        getUnsplashPhoto(word)
+                    ]);
+
+                    if (!dictRes.ok) throw new Error("Word not found in dictionary");
+                    const data = await dictRes.json();
+                    const entry = data[0];
+
+                    // 2. Prepare Image and Attribution HTML
+                    const imgUrl = unsplashData ? unsplashData.url : `https://via.placeholder.com/800x400?text=No+Unsplash+Image+Found+for+${word}`;
+
+                    // Unsplash requires attribution
+                    const attributionHTML = unsplashData ?
+                        `<div class="attribution">
+                        
+                    </div>` : '';
+
+                    // 3. Process Synonyms & Antonyms (Same as before)
+                    let allSynonyms = []; let allAntonyms = [];
+                    entry.meanings.forEach(m => { allSynonyms = [...allSynonyms, ...m.synonyms]; allAntonyms = [...allAntonyms, ...m.antonyms]; });
+                    const topSyns = [...new Set(allSynonyms)].slice(0, 4);
+                    const topAnts = [...new Set(allAntonyms)].slice(0, 4);
+                    const translatedSyns = await Promise.all(topSyns.map(async (w) => ({ en: w, hi: await translateText(w) })));
+                    const translatedAnts = await Promise.all(topAnts.map(async (w) => ({ en: w, hi: await translateText(w) })));
+
+                    // 4. Build HTML
+                    const audioSrc = entry.phonetics.find(p => p.audio)?.audio || "";
+                    let definitionsHTML = "";
+                    entry.meanings.forEach(m => {
+                        definitionsHTML += `<div class="definition-card"><span class="pos">${m.partOfSpeech}</span><p class="meaning">${m.definitions[0].definition}</p>${m.definitions[0].example ? `<p class="example">"${m.definitions[0].example}"</p>` : ''}</div>`;
+                    });
+
+                    let synHTML = translatedSyns.length ? translatedSyns.map(item => `<div class="dual-tag" onclick="quickSearch('${item.en}')">${item.en} <span class="hi hi-text">(${item.hi})</span></div>`).join("") : "<span style='color:white; opacity:0.6;'>None found</span>";
+                    let antHTML = translatedAnts.length ? translatedAnts.map(item => `<div class="dual-tag ant" onclick="quickSearch('${item.en}')">${item.en} <span class="hi hi-text">(${item.hi})</span></div>`).join("") : "<span style='color:white; opacity:0.6;'>None found</span>";
+
+                    // 5. Render
+                    display.innerHTML = `
+                    <div class="hero">
+                        <div class="visual-wrapper">
+                            <div class="visual-frame">
+                                <img src="${imgUrl}" alt="${word}">
+                            </div>
+                            ${attributionHTML}
+                        </div>
+                        <div class="word-info">
+                            <h1 class="word-title">${entry.word}</h1>
+                            <span class="phonetic">${entry.phonetic || ""}</span>
+                            <div class="translation-badge"><span>Meaning:</span><span class="hi-text" style="font-size:1.1rem;">${hindiMain}</span></div>
+                            ${audioSrc ? `<button class="audio-btn" onclick="new Audio('${audioSrc}').play()"><i class="fas fa-volume-up"></i></button>` : ''}
+                        </div>
+                    </div>
+                    <div class="section-header"><i class="fas fa-align-left"></i> Definitions</div>
+                    ${definitionsHTML}
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:30px;">
+                        <div><div class="section-header" style="color:#74b9ff;"><i class="fas fa-check"></i> Synonyms (Eng/Hi)</div><div class="tags-grid">${synHTML}</div></div>
+                        <div><div class="section-header" style="color:#ff7675;"><i class="fas fa-times"></i> Antonyms (Eng/Hi)</div><div class="tags-grid">${antHTML}</div></div>
+                    </div>
+                `;
+
+                } catch (error) {
+                    console.error(error);
+                    display.innerHTML = `<div style="text-align:center; color:white; margin-top:50px;"><i class="fas fa-exclamation-triangle" style="font-size:3rem; margin-bottom:20px;"></i><h2>Oops! Word not found.</h2><p>Try searching for a simpler form of the word.</p></div>`;
+                }
+            }
+
+            function quickSearch(word) { inp.value = word; fetchData(word); }
+        </script>
+    </body>
+
+</html>
